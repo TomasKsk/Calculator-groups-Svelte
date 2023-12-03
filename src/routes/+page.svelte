@@ -6,7 +6,18 @@
     // lifecycle function for when the component is firstly mounted
     onMount(() => {
         const handleClick = (e) => {
-            console.log(e.target);
+            const num = e.target.innerHTML;
+            console.log(num);
+
+            if (!isNaN(+num) && typeof +num === 'number') {
+                handleNumberClick(num, e);
+            }
+        }
+
+        const handleNumberClick = (num, e) => {
+            if (e.target.matches('button')) {
+                console.log('it is a num button')
+            }
         }
 
         //event listeners
