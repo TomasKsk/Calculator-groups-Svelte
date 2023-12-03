@@ -15,13 +15,16 @@
     const handleClick = (e) => {
         const num = e.target.innerHTML;
         const numId = e.target.id;
-        console.log(num);
+        console.log(num, $calcDisp, $calcMem.length);
 
         if (!isNaN(+num) && typeof +num === 'number') {
+            console.log('handle num')
             handleNumberClick(num, e);
         } else if (num === '.') {
+            console.log('handle dot')
             handleDotClick();
-        } else if (operandArr.includes(num) && $calcDisp !== '' && numId !== 'menu-icon-place') {
+        } else if (operandArr.includes(num) && calcDisp !== '' && numId !== 'menu-icon-place') {
+            console.log('handle operand')
             handleOperandClick(num, e);
         }
     }
@@ -49,14 +52,20 @@
             if ($calcDisp !== '') {
                 // handle when operand hit after finished calculation
                 if ($calcMem.includes('=')) {
-                    calcOp.svelteHTML('');
-                    $calcMem = [$calcDisp, num];
+                    calcOp.set('');
+                    calcMem.update((prev) => [$calcDisp, num])
                     calcDisp.set('');
                 } else {
                     // add operands to the array
                     calcOp.set(num);
                     calcMem.update((prev) => [...prev, $calcDisp, num]);
                     calcDisp.set('');
+                }
+            } else {
+                // change the last operand in the array
+                if ($calcMem.length > 0) {
+                    calcOp.set(num);
+                    calcMem.update((prev) => [...prev.slice(0, -1), num]);
                 }
             }
         }
