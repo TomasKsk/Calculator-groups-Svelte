@@ -6,7 +6,7 @@
     const dataTypes = ['header', 'number', 'comment', 'operator'];
 
     let calcMem = writable([]);
-    let saveIco = writable('≡');
+    let saveIco = writable('');
     let calcDisp = writable('');
     let calcOp = writable('');
     let delKey = writable('C');
@@ -29,6 +29,8 @@
             handleOperandClick(num, e);
         } else if (num === '=') {
             handleEqualClick();
+        } else if (num === 'C' || num === 'CE') {
+            handleDel(num);
         }
     }
 
@@ -39,7 +41,18 @@
             if (!$calcMem.includes('=')) {
                 // concat number to the existing text variable
                 calcDisp.update((prevDisp) => prevDisp + num);
-
+                if ($calcOp !== '') {
+                    calcOp.set('');
+                }
+                if ($delKey === 'CE') {
+                    delKey.set('C')
+                }
+            } else {
+                if ($delKey === 'CE') {
+                    delKey.set('C');
+                }
+                calcDisp.set('');
+                $calcMem = [];
             }
         }
     }
@@ -105,7 +118,22 @@
             calcDisp.set(tempDisp);
             saveIco.set('<');
         }
-    }
+    };
+
+    const handleDel = (operand) => {
+        if (operand === 'C' && $calcDisp !== '') {
+            calcDisp.set('');
+            delKey.set($calcMem.length > 0 ? 'CE' : 'C');
+        } else if (operand === 'CE') {
+            if ($calcDisp !== '') {
+                calcDisp.set('');
+                delKey.set('CE');
+            } else {
+                $calcMem = [];
+                delKey.set('C');
+            };
+        }
+    };
 
     // lifecycle function for when the component is firstly mounted
     onMount(() => {
@@ -120,7 +148,6 @@
     });
     
 </script>
-<slot />
 
 <div class='container'>
     <div id='calc-main' class='calc-grid'>
@@ -128,7 +155,7 @@
             <div id="menu-icon-place" class="storage-window"></div>
             <div class="calc-current">{$calcDisp}</div>
             <div class="calc-mem">{$calcMem.join('')}</div>
-            <div><span class="save-button saveIcon" id="save-icon-place"></span></div>
+            <div><span class="save-button saveIcon" id="save-icon-place">{$saveIco}</span></div>
         </div>
         <div class='calc-keys'>
             <button class="op1">+</button>
