@@ -7,18 +7,22 @@
 
     let calcMem = writable([]);
     let calcDisp = writable('');
+    let calcOp = writable('');
     let delKey = writable('C');
 
 
     // handle ALL clicks here
     const handleClick = (e) => {
         const num = e.target.innerHTML;
+        const numId = e.target.id;
         console.log(num);
 
         if (!isNaN(+num) && typeof +num === 'number') {
             handleNumberClick(num, e);
         } else if (num === '.') {
             handleDotClick();
+        } else if (operandArr.includes(num) && $calcDisp !== '' && numId !== 'menu-icon-place') {
+            handleOperandClick(num, e);
         }
     }
 
@@ -40,6 +44,24 @@
         }
     };
 
+    const handleOperandClick = (num, e) => {
+        if (e.target.matches('button')) {
+            if ($calcDisp !== '') {
+                // handle when operand hit after finished calculation
+                if ($calcMem.includes('=')) {
+                    calcOp.svelteHTML('');
+                    $calcMem = [$calcDisp, num];
+                    calcDisp.set('');
+                } else {
+                    // add operands to the array
+                    calcOp.set(num);
+                    calcMem.update((prev) => [...prev, $calcDisp, num]);
+                    calcDisp.set('');
+                }
+            }
+        }
+    }
+
     // lifecycle function for when the component is firstly mounted
     onMount(() => {
         //event listeners
@@ -60,7 +82,7 @@
         <div class="calc-display">
             <div id="menu-icon-place" class="storage-window"></div>
             <div class="calc-current">{$calcDisp}</div>
-            <div class="calc-mem">{$calcMem}</div>
+            <div class="calc-mem">{$calcMem.join('')}</div>
             <div><span class="save-button saveIcon" id="save-icon-place"></span></div>
         </div>
         <div class='calc-keys'>
