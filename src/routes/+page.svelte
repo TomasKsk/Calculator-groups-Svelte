@@ -17,9 +17,12 @@
 
         if (!isNaN(+num) && typeof +num === 'number') {
             handleNumberClick(num, e);
+        } else if (num === '.') {
+            handleDotClick();
         }
     }
 
+    // All functions from handle All clicks
     const handleNumberClick = (num, e) => {
         if (e.target.matches('button')) {
             // console.log('it is a num button')
@@ -30,6 +33,13 @@
             }
         }
     }
+
+    const handleDotClick = () => {
+        if (!$calcDisp.includes('.')) {
+            calcDisp.update((prevDisp) => prevDisp + '.');
+        }
+    };
+
     // lifecycle function for when the component is firstly mounted
     onMount(() => {
         //event listeners
