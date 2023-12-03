@@ -6,6 +6,7 @@
     const dataTypes = ['header', 'number', 'comment', 'operator'];
 
     let calcMem = writable([]);
+    let saveIco = writable('≡');
     let calcDisp = writable('');
     let calcOp = writable('');
     let delKey = writable('C');
@@ -26,6 +27,8 @@
         } else if (operandArr.includes(num) && calcDisp !== '' && numId !== 'menu-icon-place') {
             console.log('handle operand')
             handleOperandClick(num, e);
+        } else if (num === '=') {
+            handleEqualClick();
         }
     }
 
@@ -67,7 +70,40 @@
                     calcOp.set(num);
                     calcMem.update((prev) => [...prev.slice(0, -1), num]);
                 }
-            }
+            };
+        }
+    };
+
+    const parseOp = (num1, op, num2) => {
+        num1 = +(num1);
+        num2 = +(num2);
+        if (op === '+') return num1 + num2;
+        if (op === '-') return num1 - num2;
+        if (op === 'x' || op === '*') return num1 * num2;
+        if (op === '÷' || op === '/') return num1 / num2;
+    };
+
+    const recalc = (arr) => {
+        let temp2 = [].concat(arr);
+        let temp = parseOp(temp2[0], temp2[1], temp2[2]);
+        console.log(temp2);
+        temp2.splice(0,3)
+
+        while(temp2.length > 0 && temp2[0] !== '=') {
+            let cur = temp2.splice(0,2);
+            temp = parseOp(temp, cur[0], cur[1]);
+        }
+        console.log(temp);
+        return temp;
+    };
+
+    const handleEqualClick = () => {
+        if ($calcDisp !== '' && $calcMem.length > 1) {
+            let tempMem = [...$calcMem, $calcDisp];
+            let tempDisp = recalc(tempMem);
+            $calcMem = [...$calcMem, $calcDisp, '=', tempDisp];
+            calcDisp.set(tempDisp);
+            saveIco.set('<');
         }
     }
 
