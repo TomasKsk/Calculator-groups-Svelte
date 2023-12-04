@@ -234,6 +234,39 @@
     </div>
 
     <!-- here comes the storage -->
+    <div id="calc-mem-storage" class="calc-mem-storage">
+        {#each Object.entries($calcStorage) as [key, { calculation, comments, name }]}
+          <div class='storage-item' key={key} id={key}>
+            <div>
+              <h3>
+                <span class="editable" data-type="header" data-idparent={key}>{name}</span>
+                <button class="delete-mem" data-type="deleteButton" data-idparent={key}>x</button>
+              </h3>
+            </div>
+            {#each calculation as a, b}
+              {#if typeof a === 'number'}
+                {#if b === calculation.length - 1}
+                  <div key={b}>
+                    <strong>
+                      <span data-type="number" data-idparent={key} data-index={b}>{a}</span>
+                    </strong>
+                    <button data-type="addNum" data-index={b} data-idparent={key}>Add</button>
+                  </div>
+                {:else}
+                  <div key={b}>
+                    <strong>
+                      <span class="editable" data-type="number" data-idparent={key} data-index={b}>{a}</span>
+                    </strong>
+                    <span class="editable" data-type="comment" data-idparent={key} data-index={b}>{comments[b]}</span>
+                  </div>
+                {/if}
+              {:else}
+                <span key={b} class="editable" data-type="operator" data-idparent={key} data-index={b}>{a}</span>
+              {/if}
+            {/each}
+          </div>
+        {/each}
+      </div>
 </div>
 
 
