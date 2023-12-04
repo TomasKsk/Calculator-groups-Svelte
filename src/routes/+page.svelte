@@ -11,6 +11,17 @@
     let calcOp = writable('');
     let delKey = writable('C');
 
+    let calcStorage = writable(() => {
+        const item = localStorage.getItem('Calc_save');
+        return JSON.parse(item) || {};
+    })
+
+    let countInit = () => {
+        let temp = Object.keys($calcStorage);
+        return (temp.length > 0) ? +(temp[temp.length - 1].match(/\d+/)[0]) + 1 : 0;
+    };
+
+    let calcMemCount = writable(countInit());
 
     // handle ALL clicks here
     const handleClick = (e) => {
@@ -31,6 +42,8 @@
             handleEqualClick();
         } else if (num === 'C' || num === 'CE') {
             handleDel(num);
+        } else if (numId === 'save-icon-place') {
+            saveCalc();
         }
     }
 
@@ -45,7 +58,7 @@
                     calcOp.set('');
                 }
                 if ($delKey === 'CE') {
-                    delKey.set('C')
+                    delKey.set('C');
                 }
             } else {
                 if ($delKey === 'CE') {
@@ -53,9 +66,9 @@
                 }
                 calcDisp.set('');
                 $calcMem = [];
-            }
+            };
         }
-    }
+    };
 
     const handleDotClick = () => {
         if (!$calcDisp.includes('.')) {
@@ -135,6 +148,26 @@
         }
     };
 
+    const saveCalc = () => {
+        let name = 'calc_' + $calcMemCount;
+        let newCalc = $calcMem.map(a => (typeof +a === 'number' && !isNaN(a)) ? +a : a);
+
+        calcStorage.update((prev) => ({
+            ...prev,
+            [name]: {
+                'calculation': newCalc,
+                'comments': newCalc.slice(0, -2).map(a => (typeof a == 'number' && a !== '=') ? '...' : null).concat(null, null),
+                'name': name
+            }
+        }));
+
+        calcMemCount.set($calcMemCount + 1);
+        saveIco.set('');
+        $calcMem = [];
+        calcDisp.set('');
+        console.log($calcStorage);
+    };
+
     // lifecycle function for when the component is firstly mounted
     onMount(() => {
         //event listeners
@@ -146,6 +179,8 @@
             sel.removeEventListener('click', handleClick);
         };
     });
+
+
     
 </script>
 
