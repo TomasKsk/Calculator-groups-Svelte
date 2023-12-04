@@ -6,6 +6,7 @@
     const dataTypes = ['header', 'number', 'comment', 'operator'];
 
     let calcMem = writable([]);
+    let menuIcon = writable('≡');
     let saveIco = writable('');
     let calcDisp = writable('');
     let calcOp = writable('');
@@ -44,6 +45,8 @@
             handleDel(num);
         } else if (numId === 'save-icon-place') {
             saveCalc();
+        } else if (numId === 'menu-icon-place') {
+            handleMenu(e);
         }
     }
 
@@ -168,6 +171,22 @@
         console.log($calcStorage);
     };
 
+    const handleMenu = (e) => {
+        let sel = e.target.innerHTML;
+        let sel2 = document.querySelector('.calc-mem-storage');
+        if (sel === '≡') {
+            menuIcon.set('x');
+        }
+
+        if (sel === 'x') {
+            menuIcon.set('≡');
+        }
+
+        let condi = sel2 !== null;
+        if (condi) return sel2.classList.toggle('visible');
+    };
+
+
     // lifecycle function for when the component is firstly mounted
     onMount(() => {
         //event listeners
@@ -187,7 +206,7 @@
 <div class='container'>
     <div id='calc-main' class='calc-grid'>
         <div class="calc-display">
-            <div id="menu-icon-place" class="storage-window"></div>
+            <div id="menu-icon-place" class="storage-window">{$menuIcon}</div>
             <div class="calc-current">{$calcDisp}</div>
             <div class="calc-mem">{$calcMem.join('')}</div>
             <div><span class="save-button saveIcon" id="save-icon-place">{$saveIco}</span></div>
