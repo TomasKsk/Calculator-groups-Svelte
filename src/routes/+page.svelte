@@ -296,6 +296,18 @@
                     $calcStorage[parent]['comments'][index] = inner;
                 }
 
+                if (type === 'number') {
+                    let thisCalc = $calcStorage[parent]['calculation'].map((a,b) => (b == index) ? +inner : a);
+                    let newObj = {
+                        ...$calcStorage[parent],
+                        calculation: [...thisCalc.slice(0, -1), recalc(thisCalc)]
+                    };
+                    calcStorage.update((prev) => ({
+                        ...prev,
+                        [parent]: newObj
+                    }));
+                }
+
 
             }
         };
