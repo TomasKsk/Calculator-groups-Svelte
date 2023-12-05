@@ -32,6 +32,11 @@
         let type = e.target.dataset.type;
         console.log(num, $calcDisp, $calcMem.length, type);
 
+        //for selection of storage items only
+        if (dataT.type) {
+            handleStorage(e);
+        }
+
         if (!isNaN(+num) && typeof +num === 'number') {
             console.log('handle num')
             handleNumberClick(num, e);
@@ -57,6 +62,19 @@
     };
 
     // All functions from handle All clicks
+
+    const selectMe = (e) => {
+        e.target.setAttribute('contenteditable', true);
+        document.execCommand('selectAll', false, null);
+    }
+
+    const handleStorage = (e) => {
+        let dataT = e.target.dataset.type;
+        if (dataTypes.includes(dataT)) {
+            selectMe(e);
+        }
+    }
+
     const handleNumberClick = (num, e) => {
         if (e.target.matches('button')) {
             // console.log('it is a num button')
@@ -305,7 +323,7 @@
                 {#if b === calculation.length - 1}
                   <div key={b}>
                     <strong>
-                      <span data-type="number" data-idparent={key} data-index={b}>{a}</span>
+                      <span data-idparent={key} data-index={b}>{a}</span>
                     </strong>
                     <button data-type="addNum" data-index={b} data-idparent={key}>Add</button>
                   </div>
@@ -318,7 +336,11 @@
                   </div>
                 {/if}
               {:else}
-                <span key={b} class="editable" data-type="operator" data-idparent={key} data-index={b}>{a}</span>
+                {#if b === calculation.length - 2}
+                    <span key={b} data-index={b}>{a}</span>
+                {:else}
+                    <span key={b} class="editable" data-type="operator" data-idparent={key} data-index={b}>{a}</span>
+                {/if}
               {/if}
             {/each}
           </div>
