@@ -51,8 +51,10 @@
             handleMenu(e);
         } else if (type === 'deleteButton') {
             handleDelete(e);
+        } else if (type === 'addNum') {
+            addNum(e);
         }
-    }
+    };
 
     // All functions from handle All clicks
     const handleNumberClick = (num, e) => {
@@ -226,6 +228,19 @@
         });
 
         $calcMemCount = +Object.keys($calcStorage).pop().replace(/\D+/, '') + 1;
+    };
+
+    const addNum = (e) => {
+      const key = e.target.dataset.idparent;
+
+      const updatedCalc = [...$calcStorage[key]['calculation'].slice(0, -2), '+', 0, ...$calcStorage[key]['calculation'].slice(-2)];
+      const updatedComm = [...$calcStorage[key]['comments'].slice(0, -2), null, '...', null, null];
+
+      $calcStorage[key] = {
+        ...$calcStorage[key],
+        calculation: updatedCalc,
+        comments: updatedComm
+      };
     };
 
 
