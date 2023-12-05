@@ -308,7 +308,19 @@
                     }));
                 }
 
+                if (type === 'operator') {
+                    $calcStorage[parent]['calculation'][index] = inner;
+                    let thisCalc = $calcStorage[parent]['calculation'];
 
+                    let newObj = {
+                        ...$calcStorage[parent],
+                        calculation: [...thisCalc.slice(0, -1), recalc(thisCalc)]
+                    };
+                    calcStorage.update((prev) => ({
+                        ...prev,
+                        [parent]: newObj
+                    }));
+                }
             }
         };
 
