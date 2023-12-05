@@ -245,7 +245,7 @@
         return reindexKeys(newObj);
         });
 
-        $calcMemCount = +Object.keys($calcStorage).pop().replace(/\D+/, '') + 1;
+        $calcMemCount = +Object.keys($calcStorage)?.pop()?.replace(/\D+/, '') + 1 || 0;
     };
 
     const addNum = (e) => {
@@ -262,6 +262,7 @@
     };
 
 
+
     // lifecycle function for when the component is firstly mounted
     onMount(() => {
         //event listeners
@@ -274,7 +275,21 @@
         };
     });
 
+    // handle Keydowns / keyboard input
+    onMount (() => {
+        const handleKey = (e) => {
+            console.log(e.key, e.target)
+        }
 
+
+        // add eventlisteners here
+        const sel = document.querySelector('.container');
+        sel.addEventListener('keydown', handleKey);
+
+        return () => {
+            sel.removeEventListener('keydown', handleKey);
+        };
+    });
     
 </script>
 
