@@ -275,11 +275,30 @@
         };
     });
 
+
     // handle Keydowns / keyboard input
     onMount (() => {
         const handleKey = (e) => {
-            console.log(e.key, e.target)
-        }
+            const data = e.target.dataset;
+            const type = data.type;
+            const parent = data.idparent;
+            const index = data.index;
+            const inner = e.target.innerHTML;
+
+            if (e.key === 'Enter') {
+                e.target.setAttribute('contenteditable', false);
+
+                if (type === 'header') {
+                    $calcStorage[parent]['name'] = inner;
+                }
+
+                if (type === 'comment') {
+                    $calcStorage[parent]['comments'][index] = inner;
+                }
+
+
+            }
+        };
 
 
         // add eventlisteners here
