@@ -28,7 +28,9 @@
     const handleClick = (e) => {
         const num = e.target.innerHTML;
         const numId = e.target.id;
-        console.log(num, $calcDisp, $calcMem.length);
+        let dataT = e.target.dataset;
+        let type = e.target.dataset.type;
+        console.log(num, $calcDisp, $calcMem.length, type);
 
         if (!isNaN(+num) && typeof +num === 'number') {
             console.log('handle num')
@@ -36,7 +38,7 @@
         } else if (num === '.') {
             console.log('handle dot')
             handleDotClick();
-        } else if (operandArr.includes(num) && calcDisp !== '' && numId !== 'menu-icon-place') {
+        } else if (operandArr.includes(num) && calcDisp !== '' && numId !== 'menu-icon-place' && type !== 'deleteButton') {
             console.log('handle operand')
             handleOperandClick(num, e);
         } else if (num === '=') {
@@ -47,6 +49,8 @@
             saveCalc();
         } else if (numId === 'menu-icon-place') {
             handleMenu(e);
+        } else if (type === 'deleteButton') {
+            handleDelete(e);
         }
     }
 
@@ -184,6 +188,44 @@
 
         let condi = sel2 !== null;
         if (condi) return sel2.classList.toggle('visible');
+    };
+
+    const reindexKeys = (obj) => {
+      const currKeys = Object.keys(obj);
+      const mapping = currKeys.reduce((acc, key, index) => {
+        const newKey = `calc_${index}`;
+        acc[key] = newKey;
+        return acc;
+      }, {});
+      const updatedObj = Object.fromEntries(
+        Object.entries(obj).map(([oldKey, value]) => {
+            const newKey = mapping[oldKey];
+            const currentName = value.name;
+
+            const updatedName = currentName.includes('calc_') ? newKey : currentName;
+
+            const updatedValue = {
+            ...value,
+            name: updatedName,
+            };
+            return [newKey, updatedValue];
+        })
+      );
+      return updatedObj;
+    };
+
+    const handleDelete = (e) => {
+        console.log('deletre')
+        let parent = e.target.dataset.idparent;
+
+        calcStorage.update((prev) => {
+        const entries = Object.entries(prev);
+        const filtered = entries.filter(([key]) => key !== parent);
+        const newObj = Object.fromEntries(filtered);
+        return reindexKeys(newObj);
+        });
+
+        $calcMemCount = +Object.keys($calcStorage).pop().replace(/\D+/, '') + 1;
     };
 
 
