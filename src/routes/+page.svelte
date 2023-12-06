@@ -2,6 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { writable } from 'svelte/store';
 
+
     const operandArr = ["÷", "x", "-", "+"];
     const dataTypes = ['header', 'number', 'comment', 'operator'];
 
@@ -12,10 +13,7 @@
     let calcOp = writable('');
     let delKey = writable('C');
 
-    let calcStorage = writable(() => {
-        const item = localStorage.getItem('Calc_save');
-        return JSON.parse(item) || {};
-    })
+    const calcStorage = writable(typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('Calc_save')) : {});
 
     let countInit = () => {
         let temp = Object.keys($calcStorage);
@@ -332,6 +330,19 @@
         return () => {
             sel.removeEventListener('keydown', handleKey);
         };
+    });
+
+    
+
+    // Handle local storage
+    // Save to local storage, when calcStorage changes using the useEffect hook
+    onMount(() => {
+        const unsubscribe = calcStorage.subscribe((value) => {
+            localStorage.setItem('Calc_save', JSON.stringify(value));
+        });
+
+        // Cleanup the subscription when the component is destroyed
+        onDestroy(unsubscribe);
     });
     
 </script>
